@@ -10,8 +10,6 @@ This project implements a **modern data pipeline** for ingesting, transforming, 
 
 ##  Architecture
 
-![Architecture Diagram](./docs/architecture.png) <!-- Replace with actual image path if added to repo -->
-
 1. **Autoloader**
 
    * Ingests raw CSV files from source systems.
