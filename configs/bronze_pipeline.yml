@@ -1,1 +1,15 @@
-"bronze:" 
+# configs/bronze_pipeline.yml
+pipeline_name: flight_bronze_pipeline
+
+source:
+  type: autoloader
+  config_file: autoloader_config.yml
+
+transformations:
+  - remove_duplicates: true
+  - add_ingestion_timestamp: true
+
+target:
+  database: flight_bronze
+  volime: bronzevolume
+  path: /Volumes/workspace/flight_bronze/bronzevolume
