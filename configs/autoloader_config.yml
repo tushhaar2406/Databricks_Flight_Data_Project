@@ -1,1 +1,19 @@
-"autoloader:" 
+# configs/autoloader_config.yml
+source:
+  format: csv
+  path: /FileStore/tables/raw/flight_data/     # Upload files here in CE
+  options:
+    header: true
+    inferSchema: true
+    delimiter: ","
+
+checkpoint:
+  path: /FileStore/checkpoints/flight_data_autoloader/
+
+target:
+  database: flight_bronze
+  table: flight_raw
+  path: /FileStore/tables/bronze/flight_data/
+
+settings:
+  trigger: once   # "once", "availableNow", or "processingTime=5 minutes"
