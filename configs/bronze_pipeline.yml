@@ -2,14 +2,20 @@
 pipeline_name: flight_bronze_pipeline
 
 source:
-  type: autoloader
-  config_file: autoloader_config.yml
-
-transformations:
-  - remove_duplicates: true
-  - add_ingestion_timestamp: true
+  format: cloudFiles
+  file_format: csv
+  path_template: /Volumes/workspace/flight_raw/rawvolume/rawdata/{src}/
+  schema_location_template: /Volumes/workspace/flight_bronze/bronzevolume/{src}/checkpoint
+  options:
+    cloudFiles.schemaEvolutionMode: rescue
 
 target:
   database: flight_bronze
-  volime: bronzevolume
-  path: /Volumes/workspace/flight_bronze/bronzevolume
+  table_template: {src}_bronze
+  path_template: /Volumes/workspace/flight_bronze/bronzevolume/{src}/data
+  checkpoint_template: /Volumes/workspace/flight_bronze/bronzevolume/{src}/checkpoint
+
+write_options:
+  format: delta
+  outputMode: append
+  trigger: once
