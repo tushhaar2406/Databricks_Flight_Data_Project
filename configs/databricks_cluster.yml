@@ -1,0 +1,15 @@
+# configs/databricks_cluster.yml
+# Note: Databricks Community Edition only supports one all-purpose cluster.
+# This YAML is a placeholder for future migration to a paid Databricks workspace.
+
+cluster_name: community-edition-cluster
+spark_version: "13.3.x-scala2.12"   # Check your CE cluster version in UI
+node_type_id: Community_Edition     # Placeholder, CE uses a fixed VM
+num_workers: 1                      # CE only provides a single node (driver only)
+
+# Optional Spark config (for learning purposes)
+spark_conf:
+  "spark.sql.shuffle.partitions": "1"
+  "spark.databricks.delta.preview.enabled": "true"
+
+libraries: []                       # CE allows installing libraries manually via UI
