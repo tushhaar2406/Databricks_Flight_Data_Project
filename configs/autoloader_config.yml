@@ -1,19 +1,45 @@
 # configs/autoloader_config.yml
-source:
-  format: csv
-  path: /FileStore/tables/raw/flight_data/     # Upload files here in CE
+# Autoloader configuration for raw CSV ingestion into Bronze Layer
+
+autoloader:
+  format: cloudFiles
+  file_format: csv
   options:
+    cloudFiles.schemaEvolutionMode: rescue
     header: true
     inferSchema: true
     delimiter: ","
 
-checkpoint:
-  path: /FileStore/checkpoints/flight_data_autoloader/
+sources:
+  airports:
+    raw_path: /Volumes/workspace/flight_raw/rawvolume/rawdata/airports/
+    schema_location: /Volumes/workspace/flight_bronze/bronzevolume/airports/checkpoint
+    target_table: bronze_airports
+    target_path: /Volumes/workspace/flight_bronze/bronzevolume/airports/data
+    checkpoint: /Volumes/workspace/flight_bronze/bronzevolume/airports/checkpoint
 
-target:
-  database: flight_raw
-  volume: rawvolume
-  path: /Volumes/workspace/flight_raw/rawvolume/rawdata/
+  bookings:
+    raw_path: /Volumes/workspace/flight_raw/rawvolume/rawdata/bookings/
+    schema_location: /Volumes/workspace/flight_bronze/bronzevolume/bookings/checkpoint
+    target_table: bronze_bookings
+    target_path: /Volumes/workspace/flight_bronze/bronzevolume/bookings/data
+    checkpoint: /Volumes/workspace/flight_bronze/bronzevolume/bookings/checkpoint
 
-settings:
-  trigger: once   # "once", "availableNow", or "processingTime=5 minutes"
+  customers:
+    raw_path: /Volumes/workspace/flight_raw/rawvolume/rawdata/customers/
+    schema_location: /Volumes/workspace/flight_bronze/bronzevolume/customers/checkpoint
+    target_table: bronze_customers
+    target_path: /Volumes/workspace/flight_bronze/bronzevolume/customers/data
+    checkpoint: /Volumes/workspace/flight_bronze/bronzevolume/customers/checkpoint
+
+  flights:
+    raw_path: /Volumes/workspace/flight_raw/rawvolume/rawdata/flights/
+    schema_location: /Volumes/workspace/flight_bronze/bronzevolume/flights/checkpoint
+    target_table: bronze_flights
+    target_path: /Volumes/workspace/flight_bronze/bronzevolume/flights/data
+    checkpoint: /Volumes/workspace/flight_bronze/bronzevolume/flights/checkpoint
+
+write_options:
+  format: delta
+  outputMode: append
+  trigger: once
