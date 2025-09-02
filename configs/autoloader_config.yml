@@ -11,9 +11,9 @@ checkpoint:
   path: /FileStore/checkpoints/flight_data_autoloader/
 
 target:
-  database: flight_bronze
-  table: flight_raw
-  path: /FileStore/tables/bronze/flight_data/
+  database: flight_raw
+  volume: rawvolume
+  path: /Volumes/workspace/flight_raw/rawvolume/rawdata/
 
 settings:
   trigger: once   # "once", "availableNow", or "processingTime=5 minutes"
