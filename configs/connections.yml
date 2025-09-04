@@ -1,0 +1,19 @@
+# Connection details for sources and targets
+connections:
+  raw_volume: "/Volumes/workspace/flight_raw/rawvolume"
+  bronze_volume: "/Volumes/workspace/flight_bronze/bronzevolume"
+  gold_volume: "/Volumes/workspace/flight_gold/goldvolume"
+
+ # Databases
+  silver_db: "workspace.flight_silver"
+
+  # Silver tables
+  silver_airports: "workspace.flight_silver.silver_airports"
+  silver_bookings: "workspace.flight_silver.silver_bookings"
+  silver_business: "workspace.flight_silver.silver_business"
+  silver_flights: "workspace.flight_silver.silver_flights"
+  silver_passengers: "workspace.flight_silver.silver_passengers"
+  stage_bookings: "workspace.flight_silver.stage_bookings"
+
+ 
+
