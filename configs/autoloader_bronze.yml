@@ -1,0 +1,17 @@
+autoloader:
+  format: "cloudFiles"
+  file_format: "csv"
+  options:
+    header: "true"
+    inferSchema: "true"
+    schemaEvolutionMode: "addNewColumns"
+
+  checkpoint_location: "dbfs:/Volumes/workspace/flight_bronze/bronzevolume/{table}/checkpoint/"
+  target_path: "dbfs:/Volumes/workspace/flight_bronze/bronzevolume/{table}/data/"
+  source_path: "dbfs:/Volumes/workspace/flight_raw/raw_volume/rawdata/{table}/"
+
+  tables:
+    - bookings
+    - flights
+    - passengers
+    - airports
