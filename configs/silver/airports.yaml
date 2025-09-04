@@ -1,0 +1,11 @@
+tables:
+  - name: "silver_airports"
+    source: "bronze.airports"
+    stage_view: "trans_airports"
+    transformations:
+      - add_column: {"modifiedDate": "current_timestamp()"}
+      - drop_columns: ["_rescued_data"]
+    cdc:
+      type: "scd1"
+      keys: ["airport_id"]
+      sequence_by: "modifiedDate"

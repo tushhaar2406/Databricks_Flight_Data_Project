@@ -1,0 +1,13 @@
+tables:
+  - name: "silver_business"
+    dependencies:
+      - "silver_bookings"
+      - "silver_flights"
+      - "silver_passengers"
+      - "silver_airports"
+    join_conditions:
+      - "silver_bookings.flight_id = silver_flights.flight_id"
+      - "silver_bookings.passenger_id = silver_passengers.passenger_id"
+      - "silver_bookings.airport_id = silver_airports.airport_id"
+    transformations:
+      - drop_columns: ["modifiedDate"]
