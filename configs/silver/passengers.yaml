@@ -1,0 +1,11 @@
+tables:
+  - name: "silver_passengers"
+    source: "bronze.customers"
+    stage_view: "trans_passengers"
+    transformations:
+      - add_column: {"modifiedDate": "current_timestamp()"}
+      - drop_columns: ["_rescued_data"]
+    cdc:
+      type: "scd1"
+      keys: ["passenger_id"]
+      sequence_by: "modifiedDate"
