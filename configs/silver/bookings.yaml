@@ -1,0 +1,14 @@
+tables:
+  - name: "silver_bookings"
+    source: "bronze.bookings"
+    stage_table: "stage_bookings"
+    transformations:
+      - cast: {"amount": "double"}
+      - to_date: {"booking_date": "yyyy-MM-dd"}
+      - add_column: {"modifiedDate": "current_timestamp()"}
+      - drop_columns: ["_rescued_data"]
+    expectations:
+      - rule: "booking_id IS NOT NULL"
+        action: "drop"   # drop / warn / fail
+      - rule: "passenger_id IS NOT NULL"
+        action: "drop"
