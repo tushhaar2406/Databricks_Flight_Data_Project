@@ -8,7 +8,7 @@ autoloader:
 
   checkpoint_location: "/Volumes/workspace/flight_bronze/bronzevolume/{table}/checkpoint/"
   target_path: "/Volumes/workspace/flight_bronze/bronzevolume/{table}/data/"
-  source_path: "/Volumes/workspace/flight_raw/raw_volume/rawdata/{table}/"
+  source_path: "/Volumes/workspace/flight_raw/rawvolume/rawdata/{table}/"
 
   tables:
     - bookings

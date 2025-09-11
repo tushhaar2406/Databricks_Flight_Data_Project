@@ -1,8 +1,149 @@
-silver_pipeline:
-  type: "dlt"
-  include:
-    - "silver/bookings.yaml"
-    - "silver/flights.yaml"
-    - "silver/passengers.yaml"
-    - "silver/airports.yaml"
-    - "silver/business.yaml"
+# DLT Flight Data Pipeline Configuration
+pipeline:
+  name: "flight_data_pipeline"
+  description: "Data pipeline for processing flight booking and related data"
+  
+# Data Sources Configuration
+sources:
+  bronze_volume_path: "/Volumes/workspace/flight_bronze/bronzevolume"
+  
+  datasets:
+    bookings:
+      path: "/Volumes/workspace/flight_bronze/bronzevolume/bookings/data"
+      format: "delta"
+      
+    flights:
+      path: "/Volumes/workspace/flight_bronze/bronzevolume/flights/data/"
+      format: "delta"
+      
+    customers:
+      path: "/Volumes/workspace/flight_bronze/bronzevolume/customers/data/"
+      format: "delta"
+      
+    airports:
+      path: "/Volumes/workspace/flight_bronze/bronzevolume/airports/data/"
+      format: "delta"
+
+# Pipeline Tables and Views Configuration
+tables:
+  # Booking Data Pipeline
+  stage_bookings:
+    type: "table"
+    source: "bookings"
+    description: "Staging table for raw booking data"
+    
+  trans_bookings:
+    type: "view"
+    source: "stage_bookings"
+    description: "Transformed booking data with type casting and date formatting"
+    transformations:
+      - column: "amount"
+        operation: "cast"
+        target_type: "DoubleType"
+      - column: "modifiedDate"
+        operation: "add"
+        value: "current_timestamp()"
+      - column: "booking_date"
+        operation: "cast"
+        target_type: "date"
+      - column: "_rescued_data"
+        operation: "drop"
+        
+  silver_bookings:
+    type: "table"
+    source: "trans_bookings"
+    description: "Silver layer booking data with data quality rules"
+    data_quality_rules:
+      rule1: "booking_id IS NOT NULL"
+      rule2: "passenger_id IS NOT NULL"
+    quality_action: "expect_all_or_drop"
+    
+  # Flight Data Pipeline
+  trans_flights:
+    type: "view"
+    source: "flights"
+    description: "Transformed flight data"
+    transformations:
+      - column: "flight_date"
+        operation: "cast"
+        target_type: "date"
+      - column: "_rescued_data"
+        operation: "drop"
+      - column: "modifiedDate"
+        operation: "add"
+        value: "current_timestamp()"
+        
+  silver_flights:
+    type: "streaming_table"
+    source: "trans_flights"
+    description: "Silver layer flight data with CDC"
+    cdc_configuration:
+      target: "silver_flights"
+      source: "trans_flights"
+      keys: ["flight_id"]
+      sequence_by: "modifiedDate"
+      scd_type: 1
+      
+  # Passenger Data Pipeline
+  trans_passengers:
+    type: "view"
+    source: "customers"
+    description: "Transformed passenger/customer data"
+    transformations:
+      - column: "_rescued_data"
+        operation: "drop"
+      - column: "modifiedDate"
+        operation: "add"
+        value: "current_timestamp()"
+        
+  silver_passengers:
+    type: "streaming_table"
+    source: "trans_passengers"
+    description: "Silver layer passenger data with CDC"
+    cdc_configuration:
+      target: "silver_passengers"
+      source: "trans_passengers"
+      keys: ["passenger_id"]
+      sequence_by: "modifiedDate"
+      scd_type: 1
+      
+  # Airport Data Pipeline
+  trans_airports:
+    type: "view"
+    source: "airports"
+    description: "Transformed airport data"
+    transformations:
+      - column: "_rescued_data"
+        operation: "drop"
+      - column: "modifiedDate"
+        operation: "add"
+        value: "current_timestamp()"
+        
+  silver_airports:
+    type: "streaming_table"
+    source: "trans_airports"
+    description: "Silver layer airport data with CDC"
+    cdc_configuration:
+      target: "silver_airports"
+      source: "trans_airports"
+      keys: ["airport_id"]
+      sequence_by: "modifiedDate"
+      scd_type: 1
+      
+  # Business View
+  silver_business:
+    type: "table"
+    description: "Business view joining all silver layer tables"
+    sources:
+      - "silver_bookings"
+      - "silver_flights"
+      - "silver_passengers"
+      - "silver_airports"
+    join_configuration:
+      join_keys:
+        - "flight_id"
+        - "passenger_id"
+        - "airport_id"
+      transformations:
+        - column: "modifiedDate"
+          operation: "drop"
